@@ -29,9 +29,9 @@ class Login extends React.Component {
   render() {
     return (
       <div className='container'>
-        <Card title='Acesso'>
-          <div className='row'>
-            <div className='col-lg-12'>
+        <div className='col-lg-4'>
+          <Card title='Acesso'>
+            <div className='row'>
               <div className='bs-component'>
                 <FormGroup label='Login: *' htmlFor='inputLogin'>
                   <input
@@ -71,8 +71,8 @@ class Login extends React.Component {
                 </Stack>
               </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
     );
   }
