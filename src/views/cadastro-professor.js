@@ -12,6 +12,7 @@ import '../custom.css';
 class CadastroProfessor extends React.Component {
   state = {
     nome: '',
+    cpf: '',
     email: '',
     celular: '',
   };
@@ -23,6 +24,7 @@ class CadastroProfessor extends React.Component {
   cancelar = () => {
     this.setState({
       nome: '',
+      cpf: '',
       email: '',
       celular: '',
     });
@@ -43,6 +45,16 @@ class CadastroProfessor extends React.Component {
                     className='form-control'
                     name='nome'
                     onChange={(e) => this.setState({ nome: e.target.value })}
+                  />
+                </FormGroup>
+                <FormGroup label='CPF: *' htmlFor='inputCpf'>
+                  <input
+                    type='text'
+                    id='inputCpf'
+                    value={this.state.cpf}
+                    className='form-control'
+                    name='cpf'
+                    onChange={(e) => this.setState({ cpf: e.target.value })}
                   />
                 </FormGroup>
                 <FormGroup label='Email: *' htmlFor='inputEmail'>

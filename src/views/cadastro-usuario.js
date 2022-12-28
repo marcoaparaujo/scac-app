@@ -11,7 +11,8 @@ import '../custom.css';
 
 class CadastroUsuario extends React.Component {
   state = {
-    nome: '',
+    login: '',
+    cpf: '',
     email: '',
     senha: '',
     senhaRepeticao: '',
@@ -19,12 +20,13 @@ class CadastroUsuario extends React.Component {
   };
 
   cadastrar = () => {
-    mensagemSucesso(`Usuário ${this.state.nome} cadastrado com sucesso!`);
+    mensagemSucesso(`Usuário ${this.state.login} cadastrado com sucesso!`);
   };
 
   cancelar = () => {
     this.setState({
-      nome: '',
+      login: '',
+      cpf: '',
       celular: '',
       email: '',
       senha: '',
@@ -40,14 +42,24 @@ class CadastroUsuario extends React.Component {
           <div className='row'>
             <div className='col-lg-12'>
               <div className='bs-component'>
-                <FormGroup label='Nome: *' htmlFor='inputNome'>
+                <FormGroup label='Login: *' htmlFor='inputLogin'>
                   <input
                     type='text'
-                    id='inputNome'
-                    value={this.state.nome}
+                    id='inputLogin'
+                    value={this.state.login}
                     className='form-control'
-                    name='nome'
-                    onChange={(e) => this.setState({ nome: e.target.value })}
+                    name='login'
+                    onChange={(e) => this.setState({ login: e.target.value })}
+                  />
+                </FormGroup>
+                <FormGroup label='CPF: *' htmlFor='inputCpf'>
+                  <input
+                    type='text'
+                    id='inputCpf'
+                    value={this.state.cpf}
+                    className='form-control'
+                    name='cpf'
+                    onChange={(e) => this.setState({ cpf: e.target.value })}
                   />
                 </FormGroup>
                 <FormGroup label='Email: *' htmlFor='inputEmail'>

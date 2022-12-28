@@ -13,22 +13,18 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function createData(id, nome, email, administrador) {
-  return { id, nome, email, administrador };
+function createData(id, login, email, administrador) {
+  return { id, login, email, administrador };
 }
 
 const ListagemUsuarios = () => {
   const state = {
     dados: [
-      createData(1, 'Usuário 01', 'usuario01@email.com', 'Sim'),
-      createData(2, 'Usuário 02', 'usuario02@email.com', 'Sim'),
-      createData(3, 'Usuário 03', 'usuario03@email.com', 'Sim'),
-      createData(4, 'Usuário 04', 'usuario04@email.com', 'Sim'),
-      createData(5, 'Usuário 05', 'usuario05@email.com', 'Sim'),
-      createData(6, 'Usuário 06', 'usuario06@email.com', 'Sim'),
-      createData(7, 'Usuário 07', 'usuario07@email.com', 'Sim'),
-      createData(8, 'Usuário 08', 'usuario08@email.com', 'Sim'),
-      createData(9, 'Usuário 09', 'usuario09@email.com', 'Sim'),
+      createData(1, 'usuario01', 'usuario01@email.com', 'Sim'),
+      createData(2, 'usuario02', 'usuario02@email.com', 'Sim'),
+      createData(3, 'usuario03', 'usuario03@email.com', 'Sim'),
+      createData(4, 'usuario04', 'usuario04@email.com', 'Sim'),
+      createData(5, 'usuario05', 'usuario05@email.com', 'Sim'),
     ],
   };
 
@@ -62,7 +58,7 @@ const ListagemUsuarios = () => {
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>Nome</th>
+                    <th scope='col'>Login</th>
                     <th scope='col'>Email</th>
                     <th scope='col'>Administrador</th>
                     <th scope='col'>Ações</th>
@@ -71,7 +67,7 @@ const ListagemUsuarios = () => {
                 <tbody>
                   {state.dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.nome}</td>
+                      <td>{dado.login}</td>
                       <td>{dado.email}</td>
                       <td>{dado.administrador}</td>
                       <td>

@@ -8,6 +8,7 @@ import ListagemCategorias from './views/listagem-categorias';
 import ListagemAtividadesComplementares from './views/listagem-atividades-complementares';
 import AcompanhamentoAtividadesComplementares from './views/acompanhamento-atividades-complementares';
 
+import Login from './views/login';
 import CadastroUsuario from './views/cadastro-usuario';
 import CadastroCurso from './views/cadastro-curso';
 import CadastroProfessor from './views/cadastro-professor';
@@ -21,6 +22,7 @@ function Rotas(props) {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/login' element={<Login />} />
         <Route path='/cadastro-usuarios' element={<CadastroUsuario />} />
         <Route path='/cadastro-cursos' element={<CadastroCurso />} />
         <Route path='/cadastro-professores' element={<CadastroProfessor />} />

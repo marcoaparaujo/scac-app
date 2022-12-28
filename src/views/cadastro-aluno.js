@@ -13,6 +13,7 @@ class CadastroAluno extends React.Component {
   state = {
     matricula: '',
     nome: '',
+    cpf: '',
     email: '',
     celular: '',
     curso: '',
@@ -26,6 +27,7 @@ class CadastroAluno extends React.Component {
     this.setState({
       matricula: '',
       nome: '',
+      cpf: '',
       email: '',
       celular: '',
       curso: '',
@@ -59,6 +61,16 @@ class CadastroAluno extends React.Component {
                     className='form-control'
                     name='nome'
                     onChange={(e) => this.setState({ nome: e.target.value })}
+                  />
+                </FormGroup>
+                <FormGroup label='CPF: *' htmlFor='inputCpf'>
+                  <input
+                    type='text'
+                    id='inputCpf'
+                    value={this.state.cpf}
+                    className='form-control'
+                    name='cpf'
+                    onChange={(e) => this.setState({ cpf: e.target.value })}
                   />
                 </FormGroup>
                 <FormGroup label='Email: *' htmlFor='inputEmail'>

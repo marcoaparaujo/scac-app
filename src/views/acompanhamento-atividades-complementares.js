@@ -48,14 +48,14 @@ export const data = {
   labels,
   datasets: [
     {
-      label: 'Obrigatório',
-      data: [60],
+      label: 'Categoria 1',
+      data: [45],
       borderColor: 'rgb(75, 192, 192)',
       backgroundColor: 'rgba(75, 192, 192, 0.5)',
     },
     {
-      label: 'Não Obrigatório',
-      data: [40],
+      label: 'Categoria 2',
+      data: [30],
       borderColor: 'rgb(53, 162, 235)',
       backgroundColor: 'rgba(53, 162, 235, 0.5)',
     },
@@ -66,8 +66,8 @@ export const dadosGraficoDoughnut = {
   labels: ['Cumprido', 'A cumprir'],
   datasets: [
     {
-      label: 'Horas Estágio Obrigatório',
-      data: [60, 40],
+      label: 'Horas',
+      data: [75, 25],
       backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)'],
       borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
       borderWidth: 2,
@@ -75,15 +75,8 @@ export const dadosGraficoDoughnut = {
   ],
 };
 
-function createData(
-  id,
-  concedente,
-  tipoEstagio,
-  dataInicio,
-  dataFim,
-  cargaHoraria
-) {
-  return { id, concedente, tipoEstagio, dataInicio, dataFim, cargaHoraria };
+function createData(id, titulo, entidade, categoria, dataInicio, cargaHoraria) {
+  return { id, titulo, entidade, categoria, dataInicio, cargaHoraria };
 }
 
 class AcompanhamentoAtividadesComplementares extends React.Component {
@@ -92,43 +85,43 @@ class AcompanhamentoAtividadesComplementares extends React.Component {
     dados: [
       createData(
         1,
-        'Concedente 1',
-        'Obrigatório',
-        '11/11/1111',
+        'Título 1',
+        'Entidade 1',
+        'Categoria 1',
         '11/11/1111',
         '15'
       ),
       createData(
         2,
-        'Concedente 2',
-        'Obrigatório',
-        '11/11/1111',
+        'Título 2',
+        'Entidade 2',
+        'Categoria 1',
         '11/11/1111',
         '15'
       ),
       createData(
         3,
-        'Concedente 3',
-        'Obrigatório',
-        '11/11/1111',
+        'Título 3',
+        'Entidade 3',
+        'Categoria 1',
         '11/11/1111',
         '15'
       ),
       createData(
         4,
-        'Concedente 4',
-        'Obrigatório',
-        '11/11/1111',
+        'Título 4',
+        'Entidade 4',
+        'Categoria 2',
         '11/11/1111',
         '15'
       ),
       createData(
         5,
-        'Concedente 5',
-        'Não Obrigatório',
+        'Título 5',
+        'Entidade 5',
+        'Categoria 2',
         '11/11/1111',
-        '11/11/1111',
-        '40'
+        '15'
       ),
     ],
   };
@@ -158,17 +151,13 @@ class AcompanhamentoAtividadesComplementares extends React.Component {
               <br></br>
               <div className='row'>
                 <div className='col-lg-3'>
-                  <h5>Estágio Obrigatório:</h5>
+                  <h5>Atividades Complementares:</h5>
                   <h6>Total de Horas Exigidas: 100</h6>
-                  <h6>Total de Horas Cumpridas: 60</h6>
-                  <h6>Total de Horas a Cumprir: 40</h6>
+                  <h6>Total de Horas Cumpridas: 75</h6>
+                  <h6>Total de Horas a Cumprir: 25</h6>
                 </div>
                 <div className='col-lg-2'>
                   <Doughnut data={dadosGraficoDoughnut} />
-                </div>
-                <div className='col-lg-3'>
-                  <h5>Estágio Não Obrigatório:</h5>
-                  <h6>Total de Horas Cumpridas: 40</h6>
                 </div>
                 <div className='col-lg-3'>
                   <Bar options={options} data={data} />
@@ -178,20 +167,20 @@ class AcompanhamentoAtividadesComplementares extends React.Component {
               <table className='table table-hover'>
                 <thead>
                   <tr>
-                    <th scope='col'>Concedente</th>
-                    <th scope='col'>Tipo Estágio</th>
+                    <th scope='col'>Título</th>
+                    <th scope='col'>Entidade</th>
+                    <th scope='col'>Categoria</th>
                     <th scope='col'>Data Início</th>
-                    <th scope='col'>Data Fim</th>
                     <th scope='col'>Carga Horária</th>
                   </tr>
                 </thead>
                 <tbody>
                   {this.state.dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.concedente}</td>
-                      <td>{dado.tipoEstagio}</td>
+                      <td>{dado.titulo}</td>
+                      <td>{dado.entidade}</td>
+                      <td>{dado.categoria}</td>
                       <td>{dado.dataInicio}</td>
-                      <td>{dado.dataFim}</td>
                       <td>{dado.cargaHoraria}</td>
                     </tr>
                   ))}
