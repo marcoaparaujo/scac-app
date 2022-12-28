@@ -56,6 +56,13 @@ function Navbar(props) {
               label='Atividades'
             />
           </ul>
+          <ul className='navbar-nav'>
+            <NavbarItem
+              render='true'
+              href='/acompanhamento-atividades-complementares'
+              label='Acompanhamento'
+            />
+          </ul>
         </div>
       </div>
     </div>

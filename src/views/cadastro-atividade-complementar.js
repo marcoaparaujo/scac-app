@@ -140,7 +140,7 @@ class CadastroAtividadeComplementar extends React.Component {
                     onChange={(e) => this.setState({ dataFim: e.target.value })}
                   />
                 </FormGroup>
-                <FormGroup label='Certificado:' htmlFor='inputCertificado'>
+                {/* <FormGroup label='Certificado:' htmlFor='inputCertificado'>
                   <input
                     type='text'
                     id='inputCertificado'
@@ -151,7 +151,7 @@ class CadastroAtividadeComplementar extends React.Component {
                       this.setState({ certificado: e.target.value })
                     }
                   />
-                </FormGroup>
+                </FormGroup> */}
                 <FormGroup label='Link:' htmlFor='inputLink'>
                   <input
                     type='text'

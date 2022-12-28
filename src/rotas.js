@@ -6,6 +6,7 @@ import ListagemProfessores from './views/listagem-professores';
 import ListagemAlunos from './views/listagem-alunos';
 import ListagemCategorias from './views/listagem-categorias';
 import ListagemAtividadesComplementares from './views/listagem-atividades-complementares';
+import AcompanhamentoAtividadesComplementares from './views/acompanhamento-atividades-complementares';
 
 import CadastroUsuario from './views/cadastro-usuario';
 import CadastroCurso from './views/cadastro-curso';
@@ -37,6 +38,10 @@ function Rotas(props) {
         <Route
           path='/listagem-atividades-complementares'
           element={<ListagemAtividadesComplementares />}
+        />
+        <Route
+          path='/acompanhamento-atividades-complementares'
+          element={<AcompanhamentoAtividadesComplementares />}
         />
       </Routes>
     </BrowserRouter>
