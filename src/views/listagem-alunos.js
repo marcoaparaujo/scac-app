@@ -13,22 +13,12 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function createData(id, matricula, nome, email, celular) {
-  return { id, matricula, nome, email, celular };
-}
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
 
-const ListagemAlunos = () => {
-  const state = {
-    dados: [
-      createData(1, '1', 'Aluno 1', 'aluno1@email.com', '1111-1111'),
-      createData(2, '2', 'Aluno 2', 'aluno2@email.com', '2222-2222'),
-      createData(3, '3', 'Aluno 3', 'aluno3@email.com', '3333-3333'),
-      createData(4, '4', 'Aluno 4', 'aluno4@email.com', '4444-4444'),
-      createData(5, '5', 'Aluno 5', 'aluno5@email.com', '5555-5555'),
-      createData(6, '6', 'Aluno 6', 'aluno6@email.com', '6666-6666'),
-    ],
-  };
+const baseURL = `${BASE_URL}/alunos`;
 
+function ListagemAlunos() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
@@ -42,6 +32,16 @@ const ListagemAlunos = () => {
   const excluir = (id) => {
     mensagemSucesso(`Excluir`);
   };
+
+  const [dados, setDados] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
+  }, []);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -67,7 +67,7 @@ const ListagemAlunos = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {state.dados.map((dado) => (
+                  {dados.map((dado) => (
                     <tr key={dado.id}>
                       <td>{dado.matricula}</td>
                       <td>{dado.nome}</td>
@@ -99,6 +99,6 @@ const ListagemAlunos = () => {
       </Card>
     </div>
   );
-};
+}
 
 export default ListagemAlunos;

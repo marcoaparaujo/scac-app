@@ -13,22 +13,12 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function createData(id, nome, email, celular) {
-  return { id, nome, email, celular };
-}
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
 
-const ListagemProfessores = () => {
-  const state = {
-    dados: [
-      createData(1, 'Professor 1', 'professor1@email.com', '1111-1111'),
-      createData(2, 'Professor 2', 'professor2@email.com', '2222-2222'),
-      createData(3, 'Professor 3', 'professor3@email.com', '3333-3333'),
-      createData(4, 'Professor 4', 'professor4@email.com', '4444-4444'),
-      createData(5, 'Professor 5', 'professor5@email.com', '5555-5555'),
-      createData(6, 'Professor 6', 'professor6@email.com', '6666-6666'),
-    ],
-  };
+const baseURL = `${BASE_URL}/professores`;
 
+function ListagemProfessores() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
@@ -42,6 +32,16 @@ const ListagemProfessores = () => {
   const excluir = (id) => {
     mensagemSucesso(`Excluir`);
   };
+
+  const [dados, setDados] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
+  }, []);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -66,7 +66,7 @@ const ListagemProfessores = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {state.dados.map((dado) => (
+                  {dados.map((dado) => (
                     <tr key={dado.id}>
                       <td>{dado.nome}</td>
                       <td>{dado.email}</td>
@@ -97,6 +97,6 @@ const ListagemProfessores = () => {
       </Card>
     </div>
   );
-};
+}
 
 export default ListagemProfessores;

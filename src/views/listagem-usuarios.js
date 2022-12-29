@@ -13,21 +13,12 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function createData(id, login, email, administrador) {
-  return { id, login, email, administrador };
-}
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
 
-const ListagemUsuarios = () => {
-  const state = {
-    dados: [
-      createData(1, 'usuario01', 'usuario01@email.com', 'Sim'),
-      createData(2, 'usuario02', 'usuario02@email.com', 'Sim'),
-      createData(3, 'usuario03', 'usuario03@email.com', 'Sim'),
-      createData(4, 'usuario04', 'usuario04@email.com', 'Sim'),
-      createData(5, 'usuario05', 'usuario05@email.com', 'Sim'),
-    ],
-  };
+const baseURL = `${BASE_URL}/usuarios`;
 
+function ListagemUsuarios() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
@@ -41,6 +32,16 @@ const ListagemUsuarios = () => {
   const excluir = (id) => {
     mensagemSucesso(`Excluir`);
   };
+
+  const [dados, setDados] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
+  }, []);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -59,17 +60,17 @@ const ListagemUsuarios = () => {
                 <thead>
                   <tr>
                     <th scope='col'>Login</th>
-                    <th scope='col'>Email</th>
+                    <th scope='col'>CPF</th>
                     <th scope='col'>Administrador</th>
                     <th scope='col'>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {state.dados.map((dado) => (
+                  {dados.map((dado) => (
                     <tr key={dado.id}>
                       <td>{dado.login}</td>
-                      <td>{dado.email}</td>
-                      <td>{dado.administrador}</td>
+                      <td>{dado.cpf}</td>
+                      <td>{dado.admin ? 'Sim' : 'Não'}</td>
                       <td>
                         <Stack spacing={1} padding={0} direction='row'>
                           <IconButton
@@ -96,6 +97,6 @@ const ListagemUsuarios = () => {
       </Card>
     </div>
   );
-};
+}
 
 export default ListagemUsuarios;

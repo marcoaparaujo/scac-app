@@ -13,19 +13,12 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function createData(id, nome) {
-  return { id, nome };
-}
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
 
-const ListagemCursos = () => {
-  const state = {
-    dados: [
-      createData(1, 'Curso 1'),
-      createData(2, 'Curso 2'),
-      createData(3, 'Curso 3'),
-    ],
-  };
+const baseURL = `${BASE_URL}/cursos`;
 
+function ListagemCursos() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
@@ -39,6 +32,16 @@ const ListagemCursos = () => {
   const excluir = (id) => {
     mensagemSucesso(`Excluir`);
   };
+
+  const [dados, setDados] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
+  }, []);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -61,7 +64,7 @@ const ListagemCursos = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {state.dados.map((dado) => (
+                  {dados.map((dado) => (
                     <tr key={dado.id}>
                       <td>{dado.nome}</td>
                       <td>
@@ -90,6 +93,6 @@ const ListagemCursos = () => {
       </Card>
     </div>
   );
-};
+}
 
 export default ListagemCursos;

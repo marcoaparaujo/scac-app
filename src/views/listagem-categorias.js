@@ -13,19 +13,12 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function createData(id, descricao) {
-  return { id, descricao };
-}
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
 
-const ListagemCategorias = () => {
-  const state = {
-    dados: [
-      createData(1, 'Categoria 1'),
-      createData(2, 'Categoria 2'),
-      createData(3, 'Categoria 3'),
-    ],
-  };
+const baseURL = `${BASE_URL}/categorias`;
 
+function ListagemCategorias() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
@@ -39,6 +32,16 @@ const ListagemCategorias = () => {
   const excluir = (id) => {
     mensagemSucesso(`Excluir`);
   };
+
+  const [dados, setDados] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
+  }, []);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -61,7 +64,7 @@ const ListagemCategorias = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {state.dados.map((dado) => (
+                  {dados.map((dado) => (
                     <tr key={dado.id}>
                       <td>{dado.descricao}</td>
                       <td>
@@ -90,6 +93,6 @@ const ListagemCategorias = () => {
       </Card>
     </div>
   );
-};
+}
 
 export default ListagemCategorias;

@@ -13,19 +13,12 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-function createData(id, aluno, titulo, entidade, cargaHoraria, dataInicio) {
-  return { id, aluno, titulo, entidade, cargaHoraria, dataInicio };
-}
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
 
-const ListagemAtividadesComplementares = () => {
-  const state = {
-    dados: [
-      createData(1, 'Aluno 1', 'Título 1', 'Entidade 1', '10', '11/11/1111'),
-      createData(2, 'Aluno 2', 'Título 2', 'Entidade 2', '20', '22/22/2222'),
-      createData(3, 'Aluno 3', 'Título 3', 'Entidade 3', '30', '33/33/3333'),
-    ],
-  };
+const baseURL = `${BASE_URL}/atividadescomplementares`;
 
+function ListagemAtividadesComplementares() {
   const navigate = useNavigate();
 
   const cadastrar = () => {
@@ -39,6 +32,16 @@ const ListagemAtividadesComplementares = () => {
   const excluir = (id) => {
     mensagemSucesso(`Excluir`);
   };
+
+  const [dados, setDados] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setDados(response.data);
+    });
+  }, []);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -59,17 +62,19 @@ const ListagemAtividadesComplementares = () => {
                     <th scope='col'>Aluno</th>
                     <th scope='col'>Título</th>
                     <th scope='col'>Entidade</th>
+                    <th scope='col'>Categoria</th>
                     <th scope='col'>Carga Horária</th>
                     <th scope='col'>Data Início</th>
                     <th scope='col'>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {state.dados.map((dado) => (
+                  {dados.map((dado) => (
                     <tr key={dado.id}>
-                      <td>{dado.aluno}</td>
+                      <td>{dado.nomeAluno}</td>
                       <td>{dado.titulo}</td>
-                      <td>{dado.entidade}</td>
+                      <td>{dado.entidadePromotora}</td>
+                      <td>{dado.nomeCategoria}</td>
                       <td>{dado.cargaHoraria}</td>
                       <td>{dado.dataInicio}</td>
                       <td>
@@ -98,6 +103,6 @@ const ListagemAtividadesComplementares = () => {
       </Card>
     </div>
   );
-};
+}
 
 export default ListagemAtividadesComplementares;
