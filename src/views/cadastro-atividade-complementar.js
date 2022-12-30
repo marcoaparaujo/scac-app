@@ -1,190 +1,218 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 
 import Card from '../components/card';
 import FormGroup from '../components/form-group';
 
-import { mensagemSucesso } from '../components/toastr';
+import { mensagemSucesso, mensagemErro } from '../components/toastr';
 
 import '../custom.css';
 
-class CadastroAtividadeComplementar extends React.Component {
-  state = {
-    aluno: '',
-    titulo: '',
-    entidadePromotora: '',
-    categoria: '',
-    cargaHoraria: '',
-    dataInicio: '',
-    dataFim: '',
-    certificado: '',
-    link: '',
-  };
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
 
-  cadastrar = () => {
-    mensagemSucesso(
-      `Atividade Complementar ${this.state.titulo} cadastrada com sucesso!`
-    );
-  };
+function CadastroAtividadeComplementar() {
+  const navigate = useNavigate();
 
-  cancelar = () => {
-    this.setState({
-      aluno: '',
-      titulo: '',
-      entidadePromotora: '',
-      categoria: '',
-      cargaHoraria: '',
-      dataInicio: '',
-      dataFim: '',
-      certificado: '',
-      link: '',
+  const baseURL = `${BASE_URL}/atividadescomplementares`;
+
+  const [idAluno, setIdAluno] = useState(0);
+  const [titulo, setTitulo] = useState('');
+  const [entidadePromotora, setEntidadePromotora] = useState('');
+  const [idCategoria, setIdCategoria] = useState(0);
+  const [cargaHoraria, setCargaHoraria] = useState(0);
+  const [dataInicio, setDataInicio] = useState('');
+  const [dataFim, setDataFim] = useState('');
+  const [certificado, setCertificado] = useState('');
+  const [link, setLink] = useState('');
+
+  const [dadosAlunos, setDadosAlunos] = React.useState(null);
+  const [dadosCategorias, setDadosCategorias] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(`${BASE_URL}/alunos`).then((response) => {
+      setDadosAlunos(response.data);
     });
+  }, []);
+
+  React.useEffect(() => {
+    axios.get(`${BASE_URL}/categorias`).then((response) => {
+      setDadosCategorias(response.data);
+    });
+  }, []);
+
+  if (!dadosAlunos) return null;
+  if (!dadosCategorias) return null;
+
+  async function cadastrar() {
+    let data = {
+      idAluno,
+      titulo,
+      entidadePromotora,
+      idCategoria,
+      cargaHoraria,
+      dataInicio,
+      dataFim,
+      certificado,
+      link,
+    };
+    data = JSON.stringify(data);
+    await axios
+      .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
+      .then(function (response) {
+        mensagemSucesso(
+          `Atividade Complementar ${titulo} cadastrada com sucesso!`
+        );
+        navigate(`/listagem-atividades-complementares`);
+      })
+      .catch(function (error) {
+        mensagemErro(error.response.data);
+      });
+  }
+
+  const cancelar = () => {
+    setIdAluno(0);
+    setTitulo('');
+    setEntidadePromotora('');
+    setIdCategoria(0);
+    setCargaHoraria(0);
+    setDataInicio('');
+    setDataFim('');
+    setCertificado('');
+    setLink('');
   };
 
-  render() {
-    return (
-      <div className='container'>
-        <Card title='Cadastro de Atividade Complementar'>
-          <div className='row'>
-            <div className='col-lg-12'>
-              <div className='bs-component'>
-                <FormGroup label='Aluno: *' htmlFor='selectAluno'>
-                  <select
-                    class='form-select'
-                    id='selectAluno'
-                    name='aluno'
-                    value={this.state.aluno}
-                    onChange={(e) => this.setState({ aluno: e.target.value })}
-                  >
-                    <option></option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                  </select>
-                </FormGroup>
-                <FormGroup label='Título: *' htmlFor='inputTitulo'>
-                  <input
-                    type='text'
-                    id='inputTitulo'
-                    value={this.state.titulo}
-                    className='form-control'
-                    name='titulo'
-                    onChange={(e) => this.setState({ titulo: e.target.value })}
-                  />
-                </FormGroup>
-                <FormGroup
-                  label='Entidade Promotora: *'
-                  htmlFor='inputEntidadePromotora'
+  return (
+    <div className='container'>
+      <Card title='Cadastro de Atividade Complementar'>
+        <div className='row'>
+          <div className='col-lg-12'>
+            <div className='bs-component'>
+              <FormGroup label='Aluno: *' htmlFor='selectAluno'>
+                <select
+                  class='form-select'
+                  id='selectAluno'
+                  name='idAluno'
+                  value={idAluno}
+                  onChange={(e) => setIdAluno(e.target.value)}
                 >
-                  <input
-                    type='text'
-                    id='inputEntidadePromotora'
-                    value={this.state.entidadePromotora}
-                    className='form-control'
-                    name='entidadePromotora'
-                    onChange={(e) =>
-                      this.setState({ entidadePromotora: e.target.value })
-                    }
-                  />
-                </FormGroup>
-                <FormGroup label='Carga Horária: *' htmlFor='inputCargaHoraria'>
-                  <input
-                    type='text'
-                    id='inputCargaHoraria'
-                    value={this.state.cargaHoraria}
-                    className='form-control'
-                    name='cargaHoraria'
-                    onChange={(e) =>
-                      this.setState({ cargaHoraria: e.target.value })
-                    }
-                  />
-                </FormGroup>
-                <FormGroup label='Categoria: *' htmlFor='selectCategoria'>
-                  <select
-                    class='form-select'
-                    id='selectCategoria'
-                    name='categoria'
-                    value={this.state.categoria}
-                    onChange={(e) =>
-                      this.setState({ categoria: e.target.value })
-                    }
-                  >
-                    <option></option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                  </select>
-                </FormGroup>
-                <FormGroup label='Data Início: *' htmlFor='inputDataInicio'>
-                  <input
-                    type='text'
-                    id='inputDataInicio'
-                    value={this.state.dataInicio}
-                    className='form-control'
-                    name='dataInicio'
-                    onChange={(e) =>
-                      this.setState({ dataInicio: e.target.value })
-                    }
-                  />
-                </FormGroup>
-                <FormGroup label='Data Fim:' htmlFor='inputDataFim'>
-                  <input
-                    type='text'
-                    id='inputDataFim'
-                    value={this.state.dataFim}
-                    className='form-control'
-                    name='dataFim'
-                    onChange={(e) => this.setState({ dataFim: e.target.value })}
-                  />
-                </FormGroup>
-                {/* <FormGroup label='Certificado:' htmlFor='inputCertificado'>
-                  <input
-                    type='text'
-                    id='inputCertificado'
-                    value={this.state.certificado}
-                    className='form-control'
-                    name='certificado'
-                    onChange={(e) =>
-                      this.setState({ certificado: e.target.value })
-                    }
-                  />
-                </FormGroup> */}
-                <FormGroup label='Link:' htmlFor='inputLink'>
-                  <input
-                    type='text'
-                    id='inputLink'
-                    value={this.state.link}
-                    className='form-control'
-                    name='link'
-                    onChange={(e) => this.setState({ link: e.target.value })}
-                  />
-                </FormGroup>
-                <Stack spacing={1} padding={1} direction='row'>
-                  <button
-                    onClick={this.cadastrar}
-                    type='button'
-                    className='btn btn-success'
-                  >
-                    Salvar
-                  </button>
-                  <button
-                    onClick={this.cancelar}
-                    type='button'
-                    className='btn btn-danger'
-                  >
-                    Cancelar
-                  </button>
-                </Stack>
-              </div>
+                  <option value='0'> </option>
+                  {dadosAlunos.map((dado) => (
+                    <option value={dado.id}>{dado.nome}</option>
+                  ))}
+                </select>
+              </FormGroup>
+              <FormGroup label='Título: *' htmlFor='inputTitulo'>
+                <input
+                  type='text'
+                  id='inputTitulo'
+                  value={titulo}
+                  className='form-control'
+                  name='titulo'
+                  onChange={(e) => setTitulo(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup
+                label='Entidade Promotora: *'
+                htmlFor='inputEntidadePromotora'
+              >
+                <input
+                  type='text'
+                  id='inputEntidadePromotora'
+                  value={entidadePromotora}
+                  className='form-control'
+                  name='entidadePromotora'
+                  onChange={(e) => setEntidadePromotora(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup label='Carga Horária: *' htmlFor='inputCargaHoraria'>
+                <input
+                  type='text'
+                  id='inputCargaHoraria'
+                  value={cargaHoraria}
+                  className='form-control'
+                  name='cargaHoraria'
+                  onChange={(e) => setCargaHoraria(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup label='Categoria: *' htmlFor='selectCategoria'>
+                <select
+                  class='form-select'
+                  id='selectCategoria'
+                  name='idCategoria'
+                  value={idCategoria}
+                  onChange={(e) => setIdCategoria(e.target.value)}
+                >
+                  <option value='0'> </option>
+                  {dadosCategorias.map((dado) => (
+                    <option value={dado.id}>{dado.descricao}</option>
+                  ))}
+                </select>
+              </FormGroup>
+              <FormGroup label='Data Início: *' htmlFor='inputDataInicio'>
+                <input
+                  type='text'
+                  id='inputDataInicio'
+                  value={dataInicio}
+                  className='form-control'
+                  name='dataInicio'
+                  onChange={(e) => setDataInicio(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup label='Data Fim:' htmlFor='inputDataFim'>
+                <input
+                  type='text'
+                  id='inputDataFim'
+                  value={dataFim}
+                  className='form-control'
+                  name='dataFim'
+                  onChange={(e) => setDataFim(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup label='Certificado:' htmlFor='inputCertificado'>
+                <input
+                  type='text'
+                  id='inputCertificado'
+                  value={certificado}
+                  className='form-control'
+                  name='certificado'
+                  onChange={(e) => setCertificado(e.target.value)}
+                />
+              </FormGroup>
+              <FormGroup label='Link:' htmlFor='inputLink'>
+                <input
+                  type='text'
+                  id='inputLink'
+                  value={link}
+                  className='form-control'
+                  name='link'
+                  onChange={(e) => setLink(e.target.value)}
+                />
+              </FormGroup>
+              <Stack spacing={1} padding={1} direction='row'>
+                <button
+                  onClick={cadastrar}
+                  type='button'
+                  className='btn btn-success'
+                >
+                  Salvar
+                </button>
+                <button
+                  onClick={cancelar}
+                  type='button'
+                  className='btn btn-danger'
+                >
+                  Cancelar
+                </button>
+              </Stack>
             </div>
           </div>
-        </Card>
-      </div>
-    );
-  }
+        </div>
+      </Card>
+    </div>
+  );
 }
 
 export default CadastroAtividadeComplementar;
