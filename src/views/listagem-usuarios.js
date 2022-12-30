@@ -51,7 +51,7 @@ function ListagemUsuarios() {
             <div className='bs-component'>
               <button
                 type='button'
-                class='btn btn-warning'
+                className='btn btn-warning'
                 onClick={() => cadastrar()}
               >
                 Novo Usuário
