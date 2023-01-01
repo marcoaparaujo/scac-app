@@ -2,7 +2,7 @@ import React from 'react';
 
 import Card from '../components/card';
 
-import { mensagemSucesso } from '../components/toastr';
+import { mensagemSucesso, mensagemErro } from '../components/toastr';
 
 import '../custom.css';
 
@@ -29,11 +29,28 @@ function ListagemProfessores() {
     navigate(`/cadastro-professores`);
   };
 
-  const excluir = (id) => {
-    mensagemSucesso(`Excluir`);
-  };
-
   const [dados, setDados] = React.useState(null);
+
+  async function excluir(id) {
+    let data = JSON.stringify({ id });
+    let url = `${baseURL}/${id}`;
+    console.log(url);
+    await axios
+      .delete(url, data, {
+        headers: { 'Content-Type': 'application/json' },
+      })
+      .then(function (response) {
+        mensagemSucesso(`Professor excluído com sucesso!`);
+        setDados(
+          dados.filter((dado) => {
+            return dado.id !== id;
+          })
+        );
+      })
+      .catch(function (error) {
+        mensagemErro(`Erro ao excluir o professor`);
+      });
+  }
 
   React.useEffect(() => {
     axios.get(baseURL).then((response) => {
