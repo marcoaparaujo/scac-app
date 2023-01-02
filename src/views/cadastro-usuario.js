@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 
@@ -14,37 +14,86 @@ import axios from 'axios';
 import { BASE_URL } from '../config/axios';
 
 function CadastroUsuario() {
+  const { idParam } = useParams();
+
   const navigate = useNavigate();
 
   const baseURL = `${BASE_URL}/usuarios`;
 
+  const [id, setId] = useState('');
   const [login, setLogin] = useState('');
   const [cpf, setCpf] = useState('');
   const [senha, setSenha] = useState('');
   const [senhaRepeticao, setSenhaRepeticao] = useState('');
   const [admin, setAdmin] = useState(false);
 
-  async function cadastrar() {
-    let data = { login, cpf, senha, senhaRepeticao, admin };
-    data = JSON.stringify(data);
-    await axios
-      .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
-      .then(function (response) {
-        mensagemSucesso(`Usuário ${login} cadastrado com sucesso!`);
-        navigate(`/listagem-usuarios`);
-      })
-      .catch(function (error) {
-        mensagemErro(error.response.data);
-      });
+  const [dados, setDados] = useState([]);
+
+  function inicializar() {
+    if (idParam == null) {
+      setId('');
+      setLogin('');
+      setCpf('');
+      setSenha('');
+      setSenhaRepeticao('');
+      setAdmin(false);
+    } else {
+      setId(dados.id);
+      setLogin(dados.login);
+      setCpf(dados.cpf);
+      setSenha('');
+      setSenhaRepeticao('');
+      setAdmin(dados.admin);
+    }
   }
 
-  const cancelar = () => {
-    setLogin('');
-    setCpf('');
+  async function salvar() {
+    let data = { id, login, cpf, senha, senhaRepeticao, admin };
+    data = JSON.stringify(data);
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Usuário ${login} cadastrado com sucesso!`);
+          navigate(`/listagem-usuarios`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Usuário ${login} alterado com sucesso!`);
+          navigate(`/listagem-usuarios`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    }
+  }
+
+  async function buscar() {
+    await axios.get(`${baseURL}/${idParam}`).then((response) => {
+      setDados(response.data);
+    });
+    setId(dados.id);
+    setLogin(dados.login);
+    setCpf(dados.cpf);
     setSenha('');
     setSenhaRepeticao('');
-    setAdmin(false);
-  };
+    setAdmin(dados.admin);
+  }
+
+  useEffect(() => {
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -79,6 +128,7 @@ function CadastroUsuario() {
                   value={senha}
                   className='form-control'
                   name='senha'
+                  required
                   onChange={(e) => setSenha(e.target.value)}
                 />
               </FormGroup>
@@ -89,6 +139,7 @@ function CadastroUsuario() {
                   value={senhaRepeticao}
                   className='form-control'
                   name='senhaRepeticao'
+                  required
                   onChange={(e) => setSenhaRepeticao(e.target.value)}
                 />
               </FormGroup>
@@ -96,8 +147,8 @@ function CadastroUsuario() {
                 <input
                   className='form-check-input'
                   type='checkbox'
-                  checked={admin}
                   id='checkAdmin'
+                  checked={admin}
                   name='admin'
                   onChange={(e) => setAdmin(e.target.checked)}
                 />
@@ -105,14 +156,14 @@ function CadastroUsuario() {
               </FormGroup>
               <Stack spacing={1} padding={1} direction='row'>
                 <button
-                  onClick={cadastrar}
+                  onClick={salvar}
                   type='button'
                   className='btn btn-success'
                 >
                   Salvar
                 </button>
                 <button
-                  onClick={cancelar}
+                  onClick={inicializar}
                   type='button'
                   className='btn btn-danger'
                 >

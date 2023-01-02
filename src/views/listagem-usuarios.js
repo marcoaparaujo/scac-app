@@ -26,7 +26,7 @@ function ListagemUsuarios() {
   };
 
   const editar = (id) => {
-    navigate(`/cadastro-usuarios`);
+    navigate(`/cadastro-usuarios/${id}`);
   };
 
   const [dados, setDados] = React.useState(null);
