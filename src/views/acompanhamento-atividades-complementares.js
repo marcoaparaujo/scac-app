@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Card from '../components/card';
 import FormGroup from '../components/form-group';
@@ -17,6 +17,9 @@ import { Bar, Doughnut } from 'react-chartjs-2';
 
 import '../custom.css';
 
+import axios from 'axios';
+import { BASE_URL } from '../config/axios';
+
 ChartJS.register(
   ArcElement,
   CategoryScale,
@@ -27,171 +30,244 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  indexAxis: 'y',
-  elements: {
-    bar: {
-      borderWidth: 2,
+function AcompanhamentoAtividadesComplementares() {
+  const options = {
+    indexAxis: 'y',
+    elements: {
+      bar: {
+        borderWidth: 2,
+      },
     },
-  },
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top',
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
     },
-  },
-};
+  };
 
-const labels = ['Horas'];
+  const labels = ['Horas'];
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Categoria 1',
-      data: [45],
-      borderColor: 'rgb(75, 192, 192)',
-      backgroundColor: 'rgba(75, 192, 192, 0.5)',
-    },
-    {
-      label: 'Categoria 2',
-      data: [30],
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
+  const dadosGraficoBarras = {
+    labels,
+    datasets: [],
+  };
 
-export const dadosGraficoDoughnut = {
-  labels: ['Cumprido', 'A cumprir'],
-  datasets: [
-    {
-      label: 'Horas',
-      data: [75, 25],
-      backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)'],
-      borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-      borderWidth: 2,
-    },
-  ],
-};
-
-function createData(id, titulo, entidade, categoria, dataInicio, cargaHoraria) {
-  return { id, titulo, entidade, categoria, dataInicio, cargaHoraria };
-}
-
-class AcompanhamentoAtividadesComplementares extends React.Component {
-  state = {
-    aluno: '',
-    dados: [
-      createData(
-        1,
-        'Título 1',
-        'Entidade 1',
-        'Categoria 1',
-        '11/11/1111',
-        '15'
-      ),
-      createData(
-        2,
-        'Título 2',
-        'Entidade 2',
-        'Categoria 1',
-        '11/11/1111',
-        '15'
-      ),
-      createData(
-        3,
-        'Título 3',
-        'Entidade 3',
-        'Categoria 1',
-        '11/11/1111',
-        '15'
-      ),
-      createData(
-        4,
-        'Título 4',
-        'Entidade 4',
-        'Categoria 2',
-        '11/11/1111',
-        '15'
-      ),
-      createData(
-        5,
-        'Título 5',
-        'Entidade 5',
-        'Categoria 2',
-        '11/11/1111',
-        '15'
-      ),
+  const dadosGraficoDoughnut = {
+    labels: ['Cumprido', 'A cumprir'],
+    datasets: [
+      {
+        label: '% Horas',
+        data: [],
+        backgroundColor: ['rgba(75, 192, 192, 0.5)', 'rgba(255, 99, 132, 0.5)'],
+        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+        borderWidth: 2,
+      },
     ],
   };
 
-  render() {
-    return (
-      <div className='container'>
-        <Card title='Acompanhamento de Atividades Complementares'>
-          <div className='row'>
-            <div className='col-lg-12'>
-              <div className='bs-component'></div>
-              <FormGroup label='Aluno: *' htmlFor='selectAluno'>
-                <select
-                  class='form-select'
-                  id='selectAluno'
-                  name='aluno'
-                  value={this.state.aluno}
-                  onChange={(e) => this.setState({ aluno: e.target.value })}
-                >
-                  <option></option>
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                </select>
-              </FormGroup>
-              <br></br>
-              <div className='row'>
-                <div className='col-lg-3'>
-                  <h5>Atividades Complementares:</h5>
-                  <h6>Total de Horas Exigidas: 100</h6>
-                  <h6>Total de Horas Cumpridas: 75</h6>
-                  <h6>Total de Horas a Cumprir: 25</h6>
-                </div>
-                <div className='col-lg-2'>
-                  <Doughnut data={dadosGraficoDoughnut} />
-                </div>
-                <div className='col-lg-3'>
-                  <Bar options={options} data={data} />
-                </div>
-              </div>
-              <br></br>
-              <table className='table table-hover'>
-                <thead>
-                  <tr>
-                    <th scope='col'>Título</th>
-                    <th scope='col'>Entidade</th>
-                    <th scope='col'>Categoria</th>
-                    <th scope='col'>Data Início</th>
-                    <th scope='col'>Carga Horária</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.state.dados.map((dado) => (
-                    <tr key={dado.id}>
-                      <td>{dado.titulo}</td>
-                      <td>{dado.entidade}</td>
-                      <td>{dado.categoria}</td>
-                      <td>{dado.dataInicio}</td>
-                      <td>{dado.cargaHoraria}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>{' '}
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
+  const [idAluno, setIdAluno] = useState(0);
+  const [dadosAlunos, setDadosAlunos] = useState(null);
+  const [dadosCurso, setDadosCurso] = useState([]);
+  const [dadosAtividadesComplementares, setDadosAtividadesComplementares] =
+    useState([]);
+
+  let objAluno = {};
+
+  useEffect(() => {
+    const baseURL = `${BASE_URL}/alunos`;
+    axios.get(baseURL).then((response) => {
+      setDadosAlunos(response.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (idAluno !== 0) {
+      const baseURL = `${BASE_URL}/alunos/${idAluno}/atividadescomplementares`;
+      axios.get(baseURL).then((response) => {
+        setDadosAtividadesComplementares(response.data);
+      });
+    } else {
+      setDadosAtividadesComplementares([]);
+    }
+  }, [idAluno]);
+
+  useEffect(() => {
+    if (objAluno !== null) {
+      const baseURL = `${BASE_URL}/cursos/${objAluno.idCurso}`;
+      axios.get(baseURL).then((response) => {
+        setDadosCurso(response.data);
+      });
+    }
+  }, [idAluno]);
+
+  if (!dadosAlunos) return null;
+  if (!dadosAtividadesComplementares) return null;
+  if (!dadosCurso) return null;
+
+  objAluno = dadosAlunos.find((el) => el.id == idAluno); // eslint-disable-next-line
+
+  const somaAtividadesComplementares = dadosAtividadesComplementares.reduce(
+    (soma, atividadeComplementar) => soma + atividadeComplementar.cargaHoraria,
+    0
+  );
+
+  const totalHorasCumprirAtividadesComplementares = Number.isNaN(
+    parseInt(dadosCurso.cargaHorariaMinimaAtividadesComplementares)
+  )
+    ? 0
+    : dadosCurso.cargaHorariaMinimaAtividadesComplementares -
+      somaAtividadesComplementares;
+
+  const percentualAtividadesComplementaresCumpridas =
+    (somaAtividadesComplementares * 100) /
+    dadosCurso.cargaHorariaMinimaAtividadesComplementares;
+
+  const percentualAtividadesComplementaresCumprir =
+    100 - percentualAtividadesComplementaresCumpridas;
+
+  dadosGraficoDoughnut.datasets[0].data = [
+    percentualAtividadesComplementaresCumpridas,
+    percentualAtividadesComplementaresCumprir,
+  ];
+
+  // function groupBy(array, key) {
+  //   return array.reduce((acc, item) => {
+  //     if (!acc[item[key]]) acc[item[key]] = [];
+  //     acc[item[key]].push(item);
+  //     return acc;
+  //   }, {});
+  // }
+  // const dadosAgrupados = groupBy(
+  //   dadosAtividadesComplementares,
+  //   'nomeCategoria'
+  // );
+
+  // var saida = new Map();
+  // for (let i = 0; i < dadosAtividadesComplementares.length; i++) {
+  //   saida.set(
+  //     dadosAtividadesComplementares[i].idCategoria,
+  //     dadosAtividadesComplementares[i].cargaHoraria
+  //   );
+  // }
+  // console.log(dadosAtividadesComplementares);
+  // saida = new Map([...saida.entries()].sort((a, b) => a - b));
+
+  // for (let [key, value] of saida) {
+  //   console.log(key + ' -> ' + value);
+  // }
+
+  const orderedList = dadosAtividadesComplementares.sort(
+    (a, b) => a.idCategoria - b.idCategoria
+  );
+
+  let i = 0;
+  let idCategoriaQuebra;
+  let nomeCategoria;
+  if (orderedList.length > 0) {
+    idCategoriaQuebra = orderedList[0].idCategoria;
   }
+  while (i < orderedList.length) {
+    let somaCargaHoraria = 0;
+    while (
+      i < orderedList.length &&
+      orderedList[i].idCategoria == idCategoriaQuebra
+    ) {
+      nomeCategoria = orderedList[i].nomeCategoria;
+      somaCargaHoraria = somaCargaHoraria + orderedList[i].cargaHoraria;
+      i++;
+    }
+    if (i < orderedList.length) {
+      idCategoriaQuebra = orderedList[i].idCategoria;
+    }
+    dadosGraficoBarras.datasets.push({
+      label: nomeCategoria,
+      data: [somaCargaHoraria],
+      borderColor: 'rgb(75, 192, 192)',
+      backgroundColor: 'rgba(75, 192, 192, 0.5)',
+    });
+  }
+
+  // dadosGraficoBarras.datasets.push({
+  //   label: 'Categoria 2',
+  //   data: [30],
+  //   borderColor: 'rgb(53, 162, 235)',
+  //   backgroundColor: 'rgba(53, 162, 235, 0.5)',
+  // });
+
+  return (
+    <div className='container'>
+      <Card title='Acompanhamento de Atividades Complementares'>
+        <div className='row'>
+          <div className='col-lg-12'>
+            <div className='bs-component'></div>
+            <FormGroup label='Aluno:' htmlFor='selectAluno'>
+              <select
+                class='form-select'
+                id='selectAluno'
+                name='aluno'
+                value={idAluno}
+                onChange={(e) => setIdAluno(e.target.value)}
+              >
+                <option value='0'> </option>
+                {dadosAlunos.map((dado) => (
+                  <option key={dado.id} value={dado.id}>
+                    {dado.nome}
+                  </option>
+                ))}
+              </select>
+            </FormGroup>
+            <br></br>
+            <div className='row'>
+              <div className='col-lg-3'>
+                <h5>Atividades Complementares:</h5>
+                <h6>
+                  Total de Horas Exigidas:{' '}
+                  {dadosCurso.cargaHorariaMinimaAtividadesComplementares}
+                </h6>
+                <h6>
+                  Total de Horas Cumpridas: {somaAtividadesComplementares}
+                </h6>
+                <h6>
+                  Total de Horas a Cumprir:{' '}
+                  {totalHorasCumprirAtividadesComplementares}
+                </h6>
+              </div>
+              <div className='col-lg-2'>
+                <Doughnut data={dadosGraficoDoughnut} />
+              </div>
+              <div className='col-lg-3'>
+                <Bar options={options} data={dadosGraficoBarras} />
+              </div>
+            </div>
+            <br></br>
+            <table className='table table-hover'>
+              <thead>
+                <tr>
+                  <th scope='col'>Título</th>
+                  <th scope='col'>Entidade</th>
+                  <th scope='col'>Categoria</th>
+                  <th scope='col'>Data Início</th>
+                  <th scope='col'>Carga Horária</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dadosAtividadesComplementares.map((atividadeComplementar) => (
+                  <tr key={atividadeComplementar.id}>
+                    <td>{atividadeComplementar.titulo}</td>
+                    <td>{atividadeComplementar.entidadePromotora}</td>
+                    <td>{atividadeComplementar.nomeCategoria}</td>
+                    <td>{atividadeComplementar.dataInicio}</td>
+                    <td>{atividadeComplementar.cargaHoraria}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>{' '}
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
 }
 
 export default AcompanhamentoAtividadesComplementares;
