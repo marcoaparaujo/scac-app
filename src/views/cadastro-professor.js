@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 
@@ -14,35 +14,82 @@ import axios from 'axios';
 import { BASE_URL } from '../config/axios';
 
 function CadastroProfessor() {
+  const { idParam } = useParams();
+
   const navigate = useNavigate();
 
   const baseURL = `${BASE_URL}/professores`;
 
+  const [id, setId] = useState('');
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
   const [email, setEmail] = useState('');
   const [celular, setCelular] = useState('');
 
-  async function cadastrar() {
-    let data = { nome, cpf, email, celular };
-    data = JSON.stringify(data);
-    await axios
-      .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
-      .then(function (response) {
-        mensagemSucesso(`Professor ${nome} cadastrado com sucesso!`);
-        navigate(`/listagem-professores`);
-      })
-      .catch(function (error) {
-        mensagemErro(error.response.data);
-      });
+  const [dados, setDados] = React.useState([]);
+
+  function inicializar() {
+    if (idParam == null) {
+      setId('');
+      setNome('');
+      setCpf('');
+      setEmail('');
+      setCelular('');
+    } else {
+      setId(dados.id);
+      setNome(dados.nome);
+      setCpf(dados.cpf);
+      setEmail(dados.email);
+      setCelular(dados.celular);
+    }
   }
 
-  const cancelar = () => {
-    setNome('');
-    setCpf('');
-    setEmail('');
-    setCelular('');
-  };
+  async function salvar() {
+    let data = { id, nome, cpf, email, celular };
+    data = JSON.stringify(data);
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Professor ${nome} cadastrado com sucesso!`);
+          navigate(`/listagem-professores`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Professor ${nome} alterado com sucesso!`);
+          navigate(`/listagem-professores`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    }
+  }
+
+  async function buscar() {
+    await axios.get(`${baseURL}/${idParam}`).then((response) => {
+      setDados(response.data);
+    });
+    setId(dados.id);
+    setNome(dados.nome);
+    setCpf(dados.cpf);
+    setEmail(dados.email);
+    setCelular(dados.celular);
+  }
+
+  useEffect(() => {
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
+  if (!dados) return null;
 
   return (
     <div className='container'>
@@ -92,14 +139,14 @@ function CadastroProfessor() {
               </FormGroup>
               <Stack spacing={1} padding={1} direction='row'>
                 <button
-                  onClick={cadastrar}
+                  onClick={salvar}
                   type='button'
                   className='btn btn-success'
                 >
                   Salvar
                 </button>
                 <button
-                  onClick={cancelar}
+                  onClick={inicializar}
                   type='button'
                   className='btn btn-danger'
                 >
