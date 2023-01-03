@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 
@@ -14,10 +14,13 @@ import axios from 'axios';
 import { BASE_URL } from '../config/axios';
 
 function CadastroAluno() {
+  const { idParam } = useParams();
+
   const navigate = useNavigate();
 
   const baseURL = `${BASE_URL}/alunos`;
 
+  const [id, setId] = useState('');
   const [matricula, setMatricula] = useState(0);
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
@@ -25,38 +28,85 @@ function CadastroAluno() {
   const [celular, setCelular] = useState('');
   const [idCurso, setIdCurso] = useState(0);
 
-  const [dados, setDados] = React.useState(null);
+  const [dados, setDados] = React.useState([]);
 
-  React.useEffect(() => {
-    axios.get(`${BASE_URL}/cursos`).then((response) => {
+  function inicializar() {
+    if (idParam == null) {
+      setId('');
+      setMatricula(0);
+      setNome('');
+      setCpf('');
+      setEmail('');
+      setCelular('');
+      setIdCurso(0);
+    } else {
+      setId(dados.id);
+      setMatricula(dados.matricula);
+      setNome(dados.nome);
+      setCpf(dados.cpf);
+      setEmail(dados.email);
+      setCelular(dados.celular);
+      setIdCurso(dados.idCurso);
+    }
+  }
+
+  async function salvar() {
+    let data = { id, matricula, nome, cpf, email, celular, idCurso };
+    data = JSON.stringify(data);
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Aluno ${nome} cadastrado com sucesso!`);
+          navigate(`/listagem-alunos`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Aluno ${nome} alterado com sucesso!`);
+          navigate(`/listagem-alunos`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    }
+  }
+
+  async function buscar() {
+    await axios.get(`${baseURL}/${idParam}`).then((response) => {
       setDados(response.data);
+    });
+    setId(dados.id);
+    setMatricula(dados.matricula);
+    setNome(dados.nome);
+    setCpf(dados.cpf);
+    setEmail(dados.email);
+    setCelular(dados.celular);
+    setIdCurso(dados.idCurso);
+  }
+
+  const [dadosCursos, setDadosCursos] = React.useState(null);
+
+  useEffect(() => {
+    axios.get(`${BASE_URL}/cursos`).then((response) => {
+      setDadosCursos(response.data);
     });
   }, []);
 
+  useEffect(() => {
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
   if (!dados) return null;
-
-  async function cadastrar() {
-    let data = { matricula, nome, cpf, email, celular, idCurso };
-    data = JSON.stringify(data);
-    await axios
-      .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
-      .then(function (response) {
-        mensagemSucesso(`Aluno ${nome} cadastrado com sucesso!`);
-        navigate(`/listagem-alunos`);
-      })
-      .catch(function (error) {
-        mensagemErro(error.response.data);
-      });
-  }
-
-  const cancelar = () => {
-    setMatricula(0);
-    setNome('');
-    setCpf('');
-    setEmail('');
-    setCelular('');
-    setIdCurso(0);
-  };
+  if (!dadosCursos) return null;
 
   return (
     <div className='container'>
@@ -118,26 +168,26 @@ function CadastroAluno() {
                 <select
                   className='form-select'
                   id='selectCurso'
-                  name='curso'
+                  name='idCurso'
                   value={idCurso}
                   onChange={(e) => setIdCurso(e.target.value)}
                 >
                   <option value='0'> </option>
-                  {dados.map((dado) => (
+                  {dadosCursos.map((dado) => (
                     <option value={dado.id}>{dado.nome}</option>
                   ))}
                 </select>
               </FormGroup>
               <Stack spacing={1} padding={1} direction='row'>
                 <button
-                  onClick={cadastrar}
+                  onClick={salvar}
                   type='button'
                   className='btn btn-success'
                 >
                   Salvar
                 </button>
                 <button
-                  onClick={cancelar}
+                  onClick={inicializar}
                   type='button'
                   className='btn btn-danger'
                 >

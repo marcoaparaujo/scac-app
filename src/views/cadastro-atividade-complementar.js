@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 
@@ -14,10 +14,13 @@ import axios from 'axios';
 import { BASE_URL } from '../config/axios';
 
 function CadastroAtividadeComplementar() {
+  const { idParam } = useParams();
+
   const navigate = useNavigate();
 
   const baseURL = `${BASE_URL}/atividadescomplementares`;
 
+  const [id, setId] = useState('');
   const [idAluno, setIdAluno] = useState(0);
   const [titulo, setTitulo] = useState('');
   const [entidadePromotora, setEntidadePromotora] = useState('');
@@ -28,26 +31,37 @@ function CadastroAtividadeComplementar() {
   const [certificado, setCertificado] = useState('');
   const [link, setLink] = useState('');
 
-  const [dadosAlunos, setDadosAlunos] = React.useState(null);
-  const [dadosCategorias, setDadosCategorias] = React.useState(null);
+  const [dados, setDados] = React.useState([]);
 
-  React.useEffect(() => {
-    axios.get(`${BASE_URL}/alunos`).then((response) => {
-      setDadosAlunos(response.data);
-    });
-  }, []);
+  function inicializar() {
+    if (idParam == null) {
+      setId('');
+      setIdAluno(0);
+      setTitulo('');
+      setEntidadePromotora('');
+      setIdCategoria(0);
+      setCargaHoraria(0);
+      setDataInicio('');
+      setDataFim('');
+      setCertificado('');
+      setLink('');
+    } else {
+      setId(dados.id);
+      setIdAluno(dados.idAluno);
+      setTitulo(dados.titulo);
+      setEntidadePromotora(dados.entidadePromotora);
+      setIdCategoria(dados.idCategoria);
+      setCargaHoraria(dados.cargaHoraria);
+      setDataInicio(dados.dataInicio);
+      setDataFim(dados.dataFim);
+      setCertificado(dados.certificado);
+      setLink(dados.link);
+    }
+  }
 
-  React.useEffect(() => {
-    axios.get(`${BASE_URL}/categorias`).then((response) => {
-      setDadosCategorias(response.data);
-    });
-  }, []);
-
-  if (!dadosAlunos) return null;
-  if (!dadosCategorias) return null;
-
-  async function cadastrar() {
+  async function salvar() {
     let data = {
+      id,
       idAluno,
       titulo,
       entidadePromotora,
@@ -59,30 +73,75 @@ function CadastroAtividadeComplementar() {
       link,
     };
     data = JSON.stringify(data);
-    await axios
-      .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
-      .then(function (response) {
-        mensagemSucesso(
-          `Atividade Complementar ${titulo} cadastrada com sucesso!`
-        );
-        navigate(`/listagem-atividades-complementares`);
-      })
-      .catch(function (error) {
-        mensagemErro(error.response.data);
-      });
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(
+            `Atividade Complementar ${titulo} cadastrada com sucesso!`
+          );
+          navigate(`/listagem-atividades-complementares`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(
+            `Atividade Complementar ${titulo} alterada com sucesso!`
+          );
+          navigate(`/listagem-atividades-complementares`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    }
   }
 
-  const cancelar = () => {
-    setIdAluno(0);
-    setTitulo('');
-    setEntidadePromotora('');
-    setIdCategoria(0);
-    setCargaHoraria(0);
-    setDataInicio('');
-    setDataFim('');
-    setCertificado('');
-    setLink('');
-  };
+  async function buscar() {
+    await axios.get(`${baseURL}/${idParam}`).then((response) => {
+      setDados(response.data);
+    });
+    setId(dados.id);
+    setIdAluno(dados.idAluno);
+    setTitulo(dados.titulo);
+    setEntidadePromotora(dados.entidadePromotora);
+    setIdCategoria(dados.idCategoria);
+    setCargaHoraria(dados.cargaHoraria);
+    setDataInicio(dados.dataInicio);
+    setDataFim(dados.dataFim);
+    setCertificado(dados.certificado);
+    setLink(dados.link);
+  }
+
+  const [dadosAlunos, setDadosAlunos] = React.useState(null);
+  const [dadosCategorias, setDadosCategorias] = React.useState(null);
+
+  useEffect(() => {
+    axios.get(`${BASE_URL}/alunos`).then((response) => {
+      setDadosAlunos(response.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    axios.get(`${BASE_URL}/categorias`).then((response) => {
+      setDadosCategorias(response.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
+  if (!dados) return null;
+  if (!dadosAlunos) return null;
+  if (!dadosCategorias) return null;
 
   return (
     <div className='container'>
@@ -193,14 +252,14 @@ function CadastroAtividadeComplementar() {
               </FormGroup>
               <Stack spacing={1} padding={1} direction='row'>
                 <button
-                  onClick={cadastrar}
+                  onClick={salvar}
                   type='button'
                   className='btn btn-success'
                 >
                   Salvar
                 </button>
                 <button
-                  onClick={cancelar}
+                  onClick={inicializar}
                   type='button'
                   className='btn btn-danger'
                 >

@@ -144,7 +144,7 @@ function CadastroCurso() {
 
   const [dadosProfessores, setDadosProfessores] = React.useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     axios.get(`${BASE_URL}/professores`).then((response) => {
       setDadosProfessores(response.data);
     });
