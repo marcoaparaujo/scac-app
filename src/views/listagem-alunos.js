@@ -26,7 +26,7 @@ function ListagemAlunos() {
   };
 
   const editar = (id) => {
-    navigate(`/cadastro-alunos`);
+    navigate(`/cadastro-alunos/${id}`);
   };
 
   const [dados, setDados] = React.useState(null);

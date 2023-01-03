@@ -27,12 +27,18 @@ function Rotas(props) {
           path='/cadastro-usuarios/:idParam?'
           element={<CadastroUsuario />}
         />
-        <Route path='/cadastro-cursos' element={<CadastroCurso />} />
-        <Route path='/cadastro-professores' element={<CadastroProfessor />} />
-        <Route path='/cadastro-alunos' element={<CadastroAluno />} />
-        <Route path='/cadastro-categorias' element={<CadastroCategoria />} />
+        <Route path='/cadastro-cursos/:idParam?' element={<CadastroCurso />} />
         <Route
-          path='/cadastro-atividades-complementares'
+          path='/cadastro-professores/:idParam?'
+          element={<CadastroProfessor />}
+        />
+        <Route path='/cadastro-alunos/:idParam?' element={<CadastroAluno />} />
+        <Route
+          path='/cadastro-categorias/:idParam?'
+          element={<CadastroCategoria />}
+        />
+        <Route
+          path='/cadastro-atividades-complementares/:idParam?'
           element={<CadastroAtividadeComplementar />}
         />
         <Route path='/listagem-usuarios' element={<ListagemUsuarios />} />

@@ -26,7 +26,7 @@ function ListagemCategorias() {
   };
 
   const editar = (id) => {
-    navigate(`/cadastro-categorias`);
+    navigate(`/cadastro-categorias/${id}`);
   };
 
   const [dados, setDados] = React.useState(null);

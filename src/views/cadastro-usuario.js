@@ -128,7 +128,6 @@ function CadastroUsuario() {
                   value={senha}
                   className='form-control'
                   name='senha'
-                  required
                   onChange={(e) => setSenha(e.target.value)}
                 />
               </FormGroup>
@@ -139,7 +138,6 @@ function CadastroUsuario() {
                   value={senhaRepeticao}
                   className='form-control'
                   name='senhaRepeticao'
-                  required
                   onChange={(e) => setSenhaRepeticao(e.target.value)}
                 />
               </FormGroup>

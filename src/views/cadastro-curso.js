@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
 
@@ -16,10 +16,13 @@ import axios from 'axios';
 import { BASE_URL } from '../config/axios';
 
 function CadastroCurso() {
+  const { idParam } = useParams();
+
   const navigate = useNavigate();
 
   const baseURL = `${BASE_URL}/cursos`;
 
+  const [id, setId] = useState('');
   const [nome, setNome] = useState('');
   const [possuiEstagioObrigatorio, setPossuiEstagioObrigatorio] =
     useState(false);
@@ -42,18 +45,43 @@ function CadastroCurso() {
     setIdSupervisorAtividadesComplementares,
   ] = useState(0);
 
-  const [dados, setDados] = React.useState(null);
+  const [dados, setDados] = React.useState([]);
 
-  React.useEffect(() => {
-    axios.get(`${BASE_URL}/professores`).then((response) => {
-      setDados(response.data);
-    });
-  }, []);
+  function inicializar() {
+    if (idParam == null) {
+      setId('');
+      setNome('');
+      setPossuiEstagioObrigatorio(false);
+      setCargaHorariaMinimaEstagioObrigatorio(0);
+      setPeriodoMinimoEstagioObrigatorio(0);
+      setPossuiEstagioNaoObrigatorio(false);
+      setCargaHorariaMinimaAtividadesComplementares(0);
+      setIdCoordenador(0);
+      setIdSupervisorEstagio(0);
+      setIdSupervisorAtividadesComplementares(0);
+    } else {
+      setId(dados.id);
+      setNome(dados.nome);
+      setPossuiEstagioObrigatorio(dados.possuiEstagioObrigatorio);
+      setCargaHorariaMinimaEstagioObrigatorio(
+        dados.cargaHorariaMinimaEstagioObrigatorio
+      );
+      setPeriodoMinimoEstagioObrigatorio(dados.periodoMinimoEstagioObrigatorio);
+      setPossuiEstagioNaoObrigatorio(dados.possuiEstagioNaoObrigatorio);
+      setCargaHorariaMinimaAtividadesComplementares(
+        dados.cargaHorariaMinimaAtividadesComplementares
+      );
+      setIdCoordenador(dados.idCoordenador);
+      setIdSupervisorEstagio(dados.idSupervisorEstagio);
+      setIdSupervisorAtividadesComplementares(
+        dados.idSupervisorAtividadesComplementares
+      );
+    }
+  }
 
-  if (!dados) return null;
-
-  async function cadastrar() {
+  async function salvar() {
     let data = {
+      id,
       nome,
       possuiEstagioObrigatorio,
       cargaHorariaMinimaEstagioObrigatorio,
@@ -65,28 +93,69 @@ function CadastroCurso() {
       idSupervisorAtividadesComplementares,
     };
     data = JSON.stringify(data);
-    await axios
-      .post(baseURL, data, { headers: { 'Content-Type': 'application/json' } })
-      .then(function (response) {
-        mensagemSucesso(`Curso ${nome} cadastrado com sucesso!`);
-        navigate(`/listagem-cursos`);
-      })
-      .catch(function (error) {
-        mensagemErro(error.response.data);
-      });
+    if (idParam == null) {
+      await axios
+        .post(baseURL, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Curso ${nome} cadastrado com sucesso!`);
+          navigate(`/listagem-cursos`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    } else {
+      await axios
+        .put(`${baseURL}/${idParam}`, data, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        .then(function (response) {
+          mensagemSucesso(`Curso ${nome} alterado com sucesso!`);
+          navigate(`/listagem-cursos`);
+        })
+        .catch(function (error) {
+          mensagemErro(error.response.data);
+        });
+    }
   }
 
-  const cancelar = () => {
-    setNome('');
-    setPossuiEstagioObrigatorio(false);
-    setCargaHorariaMinimaEstagioObrigatorio(0);
-    setPeriodoMinimoEstagioObrigatorio(0);
-    setPossuiEstagioNaoObrigatorio(false);
-    setCargaHorariaMinimaAtividadesComplementares(0);
-    setIdCoordenador(0);
-    setIdSupervisorEstagio(0);
-    setIdSupervisorAtividadesComplementares(0);
-  };
+  async function buscar() {
+    await axios.get(`${baseURL}/${idParam}`).then((response) => {
+      setDados(response.data);
+    });
+    setId(dados.id);
+    setNome(dados.nome);
+    setPossuiEstagioObrigatorio(dados.possuiEstagioObrigatorio);
+    setCargaHorariaMinimaEstagioObrigatorio(
+      dados.cargaHorariaMinimaEstagioObrigatorio
+    );
+    setPeriodoMinimoEstagioObrigatorio(dados.periodoMinimoEstagioObrigatorio);
+    setPossuiEstagioNaoObrigatorio(dados.possuiEstagioNaoObrigatorio);
+    setCargaHorariaMinimaAtividadesComplementares(
+      dados.cargaHorariaMinimaAtividadesComplementares
+    );
+    setIdCoordenador(dados.idCoordenador);
+    setIdSupervisorEstagio(dados.idSupervisorEstagio);
+    setIdSupervisorAtividadesComplementares(
+      dados.idSupervisorAtividadesComplementares
+    );
+  }
+
+  const [dadosProfessores, setDadosProfessores] = React.useState(null);
+
+  React.useEffect(() => {
+    axios.get(`${BASE_URL}/professores`).then((response) => {
+      setDadosProfessores(response.data);
+    });
+  }, []);
+
+  useEffect(() => {
+    buscar(); // eslint-disable-next-line
+  }, [id]);
+
+  if (!dados) return null;
+  if (!dadosProfessores) return null;
 
   return (
     <div className='container'>
@@ -113,7 +182,7 @@ function CadastroCurso() {
                   onChange={(e) => setIdCoordenador(e.target.value)}
                 >
                   <option value='0'> </option>
-                  {dados.map((dado) => (
+                  {dadosProfessores.map((dado) => (
                     <option value={dado.id}>{dado.nome}</option>
                   ))}
                 </select>
@@ -158,7 +227,7 @@ function CadastroCurso() {
                     onChange={(e) => setIdSupervisorEstagio(e.target.value)}
                   >
                     <option value='0'> </option>
-                    {dados.map((dado) => (
+                    {dadosProfessores.map((dado) => (
                       <option value={dado.id}>{dado.nome}</option>
                     ))}
                   </select>
@@ -209,7 +278,7 @@ function CadastroCurso() {
                     }
                   >
                     <option value='0'> </option>
-                    {dados.map((dado) => (
+                    {dadosProfessores.map((dado) => (
                       <option value={dado.id}>{dado.nome}</option>
                     ))}
                   </select>
@@ -234,14 +303,14 @@ function CadastroCurso() {
               </SubCard>
               <Stack spacing={1} padding={1} direction='row'>
                 <button
-                  onClick={cadastrar}
+                  onClick={salvar}
                   type='button'
                   className='btn btn-success'
                 >
                   Salvar
                 </button>
                 <button
-                  onClick={cancelar}
+                  onClick={inicializar}
                   type='button'
                   className='btn btn-danger'
                 >

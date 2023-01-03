@@ -26,7 +26,7 @@ function ListagemAtividadesComplementares() {
   };
 
   const editar = (id) => {
-    navigate(`/cadastro-atividades-complementares`);
+    navigate(`/cadastro-atividades-complementares/${id}`);
   };
 
   const [dados, setDados] = React.useState(null);
