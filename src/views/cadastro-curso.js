@@ -181,9 +181,13 @@ function CadastroCurso() {
                   value={idCoordenador}
                   onChange={(e) => setIdCoordenador(e.target.value)}
                 >
-                  <option value='0'> </option>
+                  <option key={'0'} value='0'>
+                    {' '}
+                  </option>
                   {dadosProfessores.map((dado) => (
-                    <option value={dado.id}>{dado.nome}</option>
+                    <option key={dado.id} value={dado.id}>
+                      {dado.nome}
+                    </option>
                   ))}
                 </select>
               </FormGroup>
@@ -226,9 +230,13 @@ function CadastroCurso() {
                     value={idSupervisorEstagio}
                     onChange={(e) => setIdSupervisorEstagio(e.target.value)}
                   >
-                    <option value='0'> </option>
+                    <option key={'0'} value='0'>
+                      {' '}
+                    </option>
                     {dadosProfessores.map((dado) => (
-                      <option value={dado.id}>{dado.nome}</option>
+                      <option key={dado.id} value={dado.id}>
+                        {dado.nome}
+                      </option>
                     ))}
                   </select>
                 </FormGroup>
@@ -277,9 +285,13 @@ function CadastroCurso() {
                       setIdSupervisorAtividadesComplementares(e.target.value)
                     }
                   >
-                    <option value='0'> </option>
+                    <option key='0' value='0'>
+                      {' '}
+                    </option>
                     {dadosProfessores.map((dado) => (
-                      <option value={dado.id}>{dado.nome}</option>
+                      <option key={dado.id} value={dado.id}>
+                        {dado.nome}
+                      </option>
                     ))}
                   </select>
                 </FormGroup>

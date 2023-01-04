@@ -137,6 +137,7 @@ function CadastroAluno() {
               <FormGroup label='CPF: *' htmlFor='inputCpf'>
                 <input
                   type='text'
+                  maxLength='11'
                   id='inputCpf'
                   value={cpf}
                   className='form-control'
@@ -172,9 +173,13 @@ function CadastroAluno() {
                   value={idCurso}
                   onChange={(e) => setIdCurso(e.target.value)}
                 >
-                  <option value='0'> </option>
+                  <option key={'0'} value='0'>
+                    {' '}
+                  </option>
                   {dadosCursos.map((dado) => (
-                    <option value={dado.id}>{dado.nome}</option>
+                    <option key={dado.id} value={dado.id}>
+                      {dado.nome}
+                    </option>
                   ))}
                 </select>
               </FormGroup>

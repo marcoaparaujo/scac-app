@@ -114,6 +114,7 @@ function CadastroUsuario() {
               <FormGroup label='CPF: *' htmlFor='inputCpf'>
                 <input
                   type='text'
+                  maxLength='11'
                   id='inputCpf'
                   value={cpf}
                   className='form-control'

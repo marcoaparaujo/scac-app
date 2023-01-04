@@ -163,9 +163,13 @@ function CadastroAtividadeComplementar() {
                   value={idAluno}
                   onChange={(e) => setIdAluno(e.target.value)}
                 >
-                  <option value='0'> </option>
+                  <option key={'0'} value='0'>
+                    {' '}
+                  </option>
                   {dadosAlunos.map((dado) => (
-                    <option value={dado.id}>{dado.nome}</option>
+                    <option key={dado.id} value={dado.id}>
+                      {dado.nome}
+                    </option>
                   ))}
                 </select>
               </FormGroup>
@@ -210,9 +214,13 @@ function CadastroAtividadeComplementar() {
                   value={idCategoria}
                   onChange={(e) => setIdCategoria(e.target.value)}
                 >
-                  <option value='0'> </option>
+                  <option key={'0'} value='0'>
+                    {' '}
+                  </option>
                   {dadosCategorias.map((dado) => (
-                    <option value={dado.id}>{dado.descricao}</option>
+                    <option key={dado.id} value={dado.id}>
+                      {dado.descricao}
+                    </option>
                   ))}
                 </select>
               </FormGroup>
