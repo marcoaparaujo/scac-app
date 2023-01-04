@@ -181,7 +181,7 @@ function CadastroCurso() {
                   value={idCoordenador}
                   onChange={(e) => setIdCoordenador(e.target.value)}
                 >
-                  <option key={'0'} value='0'>
+                  <option key='0' value='0'>
                     {' '}
                   </option>
                   {dadosProfessores.map((dado) => (
@@ -230,7 +230,7 @@ function CadastroCurso() {
                     value={idSupervisorEstagio}
                     onChange={(e) => setIdSupervisorEstagio(e.target.value)}
                   >
-                    <option key={'0'} value='0'>
+                    <option key='0' value='0'>
                       {' '}
                     </option>
                     {dadosProfessores.map((dado) => (

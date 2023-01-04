@@ -173,7 +173,7 @@ function CadastroAluno() {
                   value={idCurso}
                   onChange={(e) => setIdCurso(e.target.value)}
                 >
-                  <option key={'0'} value='0'>
+                  <option key='0' value='0'>
                     {' '}
                   </option>
                   {dadosCursos.map((dado) => (
