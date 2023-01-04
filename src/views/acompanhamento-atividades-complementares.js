@@ -41,7 +41,7 @@ function AcompanhamentoAtividadesComplementares() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: 'right',
       },
     },
   };
@@ -82,13 +82,15 @@ function AcompanhamentoAtividadesComplementares() {
   }, []);
 
   useEffect(() => {
-    if (idAluno !== 0) {
+    if (idAluno != 0) {
       const baseURL = `${BASE_URL}/alunos/${idAluno}/atividadescomplementares`;
       axios.get(baseURL).then((response) => {
         setDadosAtividadesComplementares(response.data);
       });
     } else {
+      objAluno = null;
       setDadosAtividadesComplementares([]);
+      setDadosCurso([]);
     }
   }, [idAluno]);
 
@@ -105,23 +107,32 @@ function AcompanhamentoAtividadesComplementares() {
   if (!dadosAtividadesComplementares) return null;
   if (!dadosCurso) return null;
 
-  objAluno = dadosAlunos.find((el) => el.id == idAluno); // eslint-disable-next-line
+  // eslint-disable-next-line
+  objAluno = dadosAlunos.find((el) => el.id == idAluno);
 
   const somaAtividadesComplementares = dadosAtividadesComplementares.reduce(
     (soma, atividadeComplementar) => soma + atividadeComplementar.cargaHoraria,
     0
   );
 
-  const totalHorasCumprirAtividadesComplementares = Number.isNaN(
+  let totalHorasCumprirAtividadesComplementares = Number.isNaN(
     parseInt(dadosCurso.cargaHorariaMinimaAtividadesComplementares)
   )
     ? 0
     : dadosCurso.cargaHorariaMinimaAtividadesComplementares -
       somaAtividadesComplementares;
 
-  const percentualAtividadesComplementaresCumpridas =
+  if (totalHorasCumprirAtividadesComplementares < 0) {
+    totalHorasCumprirAtividadesComplementares = 0;
+  }
+
+  let percentualAtividadesComplementaresCumpridas =
     (somaAtividadesComplementares * 100) /
     dadosCurso.cargaHorariaMinimaAtividadesComplementares;
+
+  if (percentualAtividadesComplementaresCumpridas > 100) {
+    percentualAtividadesComplementaresCumpridas = 100;
+  }
 
   const percentualAtividadesComplementaresCumprir =
     100 - percentualAtividadesComplementaresCumpridas;
@@ -131,44 +142,15 @@ function AcompanhamentoAtividadesComplementares() {
     percentualAtividadesComplementaresCumprir,
   ];
 
-  // function groupBy(array, key) {
-  //   return array.reduce((acc, item) => {
-  //     if (!acc[item[key]]) acc[item[key]] = [];
-  //     acc[item[key]].push(item);
-  //     return acc;
-  //   }, {});
-  // }
-  // const dadosAgrupados = groupBy(
-  //   dadosAtividadesComplementares,
-  //   'nomeCategoria'
-  // );
-
-  // var saida = new Map();
-  // for (let i = 0; i < dadosAtividadesComplementares.length; i++) {
-  //   saida.set(
-  //     dadosAtividadesComplementares[i].idCategoria,
-  //     dadosAtividadesComplementares[i].cargaHoraria
-  //   );
-  // }
-  // console.log(dadosAtividadesComplementares);
-  // saida = new Map([...saida.entries()].sort((a, b) => a - b));
-
-  // for (let [key, value] of saida) {
-  //   console.log(key + ' -> ' + value);
-  // }
-
-  const orderedList = dadosAtividadesComplementares.sort(
-    (a, b) => a.idCategoria - b.idCategoria
-  );
+  let orderedList = [...dadosAtividadesComplementares];
+  orderedList = orderedList.sort((a, b) => a.idCategoria - b.idCategoria);
 
   let i = 0;
   let idCategoriaQuebra;
   let nomeCategoria;
-  if (orderedList.length > 0) {
-    idCategoriaQuebra = orderedList[0].idCategoria;
-  }
   while (i < orderedList.length) {
     let somaCargaHoraria = 0;
+    idCategoriaQuebra = orderedList[i].idCategoria;
     while (
       i < orderedList.length &&
       orderedList[i].idCategoria == idCategoriaQuebra
@@ -177,23 +159,17 @@ function AcompanhamentoAtividadesComplementares() {
       somaCargaHoraria = somaCargaHoraria + orderedList[i].cargaHoraria;
       i++;
     }
-    if (i < orderedList.length) {
-      idCategoriaQuebra = orderedList[i].idCategoria;
-    }
+    let corR = Math.floor(Math.random() * 254) + 1;
+    let corG = Math.floor(Math.random() * 254) + 1;
+    let corB = Math.floor(Math.random() * 254) + 1;
+
     dadosGraficoBarras.datasets.push({
       label: nomeCategoria,
       data: [somaCargaHoraria],
-      borderColor: 'rgb(75, 192, 192)',
-      backgroundColor: 'rgba(75, 192, 192, 0.5)',
+      borderColor: `rgb(${corR}, ${corG}, ${corB})`,
+      backgroundColor: `rgba(${corR}, ${corG}, ${corB}, 0.5)`,
     });
   }
-
-  // dadosGraficoBarras.datasets.push({
-  //   label: 'Categoria 2',
-  //   data: [30],
-  //   borderColor: 'rgb(53, 162, 235)',
-  //   backgroundColor: 'rgba(53, 162, 235, 0.5)',
-  // });
 
   return (
     <div className='container'>
@@ -236,7 +212,7 @@ function AcompanhamentoAtividadesComplementares() {
               <div className='col-lg-2'>
                 <Doughnut data={dadosGraficoDoughnut} />
               </div>
-              <div className='col-lg-3'>
+              <div className='col-lg-5'>
                 <Bar options={options} data={dadosGraficoBarras} />
               </div>
             </div>
