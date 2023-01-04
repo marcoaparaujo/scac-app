@@ -60,6 +60,12 @@ function ListagemAtividadesComplementares() {
 
   if (!dados) return null;
 
+  function formatarData(dataCalendario) {
+    const partesData = dataCalendario.substr(0, 10).split('-');
+
+    return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
+  }
+
   return (
     <div className='container'>
       <Card title='Listagem de Atividades Complementares'>
@@ -93,7 +99,7 @@ function ListagemAtividadesComplementares() {
                       <td>{dado.entidadePromotora}</td>
                       <td>{dado.nomeCategoria}</td>
                       <td>{dado.cargaHoraria}</td>
-                      <td>{dado.dataInicio}</td>
+                      <td>{formatarData(dado.dataInicio)}</td>
                       <td>
                         <Stack spacing={1} padding={0} direction='row'>
                           <IconButton

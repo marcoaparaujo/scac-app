@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+import 'dayjs/locale/pt-br';
 
 import Card from '../components/card';
 import FormGroup from '../components/form-group';
@@ -26,8 +32,8 @@ function CadastroAtividadeComplementar() {
   const [entidadePromotora, setEntidadePromotora] = useState('');
   const [idCategoria, setIdCategoria] = useState(0);
   const [cargaHoraria, setCargaHoraria] = useState(0);
-  const [dataInicio, setDataInicio] = useState('');
-  const [dataFim, setDataFim] = useState('');
+  const [dataInicio, setDataInicio] = useState(new Date());
+  const [dataFim, setDataFim] = useState(new Date());
   const [certificado, setCertificado] = useState('');
   const [link, setLink] = useState('');
 
@@ -41,8 +47,8 @@ function CadastroAtividadeComplementar() {
       setEntidadePromotora('');
       setIdCategoria(0);
       setCargaHoraria(0);
-      setDataInicio('');
-      setDataFim('');
+      setDataInicio(new Date());
+      setDataFim(new Date());
       setCertificado('');
       setLink('');
     } else {
@@ -211,24 +217,34 @@ function CadastroAtividadeComplementar() {
                 </select>
               </FormGroup>
               <FormGroup label='Data Início: *' htmlFor='inputDataInicio'>
-                <input
-                  type='text'
-                  id='inputDataInicio'
-                  value={dataInicio}
-                  className='form-control'
-                  name='dataInicio'
-                  onChange={(e) => setDataInicio(e.target.value)}
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale='pt-br'
+                >
+                  <Stack spacing={3}>
+                    <DesktopDatePicker
+                      value={dataInicio}
+                      inputFormat='DD/MM/YYYY'
+                      onChange={(e) => setDataInicio(e)}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </Stack>
+                </LocalizationProvider>
               </FormGroup>
-              <FormGroup label='Data Fim:' htmlFor='inputDataFim'>
-                <input
-                  type='text'
-                  id='inputDataFim'
-                  value={dataFim}
-                  className='form-control'
-                  name='dataFim'
-                  onChange={(e) => setDataFim(e.target.value)}
-                />
+              <FormGroup label='Data Fim: *' htmlFor='inputDataFim'>
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale='pt-br'
+                >
+                  <Stack spacing={3}>
+                    <DesktopDatePicker
+                      value={dataFim}
+                      inputFormat='DD/MM/YYYY'
+                      onChange={(e) => setDataFim(e)}
+                      renderInput={(params) => <TextField {...params} />}
+                    />
+                  </Stack>
+                </LocalizationProvider>
               </FormGroup>
               <FormGroup label='Certificado:' htmlFor='inputCertificado'>
                 <input

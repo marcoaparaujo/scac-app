@@ -171,6 +171,12 @@ function AcompanhamentoAtividadesComplementares() {
     });
   }
 
+  function formatarData(dataCalendario) {
+    const partesData = dataCalendario.substr(0, 10).split('-');
+
+    return partesData[2] + '/' + partesData[1] + '/' + partesData[0];
+  }
+
   return (
     <div className='container'>
       <Card title='Acompanhamento de Atividades Complementares'>
@@ -233,7 +239,7 @@ function AcompanhamentoAtividadesComplementares() {
                     <td>{atividadeComplementar.titulo}</td>
                     <td>{atividadeComplementar.entidadePromotora}</td>
                     <td>{atividadeComplementar.nomeCategoria}</td>
-                    <td>{atividadeComplementar.dataInicio}</td>
+                    <td>{formatarData(atividadeComplementar.dataInicio)}</td>
                     <td>{atividadeComplementar.cargaHoraria}</td>
                   </tr>
                 ))}
